@@ -14,6 +14,7 @@ import {
   SearchIcon,
 } from "../ui/icons";
 import ColorButton from "../ui/ColorButton";
+import Avatar from "../Avatar";
 
 const menu = [
   { path: "/", icon: <HomeIcon />, clickedIcon: <HomeFillIcon /> },
@@ -24,6 +25,7 @@ const menu = [
 export default function Navbar() {
   const currentPath = usePathname();
   const { data: session } = useSession();
+  const user = session?.user;
 
   return (
     <div className="flex justify-between items-center px-6">
@@ -39,11 +41,20 @@ export default function Navbar() {
               </Link>
             </li>
           ))}
-          {session ? (
-            <ColorButton text="Sign out" onClick={() => signOut()} />
-          ) : (
-            <ColorButton text="Sign in" onClick={() => signIn()} />
+          {user && (
+            <li>
+              <Link href={`/user/${user.username}`}>
+                <Avatar image={user.image} size="small" highlight={true} />
+              </Link>
+            </li>
           )}
+          <li>
+            {session ? (
+              <ColorButton text="Sign out" onClick={() => signOut()} />
+            ) : (
+              <ColorButton text="Sign in" onClick={() => signIn()} />
+            )}
+          </li>
         </ul>
       </nav>
     </div>
