@@ -12,7 +12,9 @@ export default function Avatar({
     <div className={getContainerStyle(size, highlight)}>
       {/*eslint-disable-next-line @next/next/no-img-element */}
       <img
-        className={`bg-white rounded-full  ${getImageSizeStyle(size)}`}
+        className={`bg-white rounded-full object-cover  ${getImageSizeStyle(
+          size
+        )}`}
         src={image ?? undefined}
         alt="user"
         referrerPolicy="no-referrer"
