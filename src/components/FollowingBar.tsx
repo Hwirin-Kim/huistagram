@@ -6,6 +6,7 @@ import React from "react";
 import { SyncLoader } from "react-spinners";
 import useSWR from "swr";
 import Avatar from "./Avatar";
+import ScrollableBar from "./ui/ScrollableBar";
 export default function FollowingBar() {
   const { data, error, isLoading } = useSWR<DetailUser>("/api/me");
 
@@ -26,21 +27,20 @@ export default function FollowingBar() {
         (!users || users.length === 0) && <p>{`You don't have following`}</p>
       )}
       {users && users.length > 0 && (
-        <ul className="w-full flex gap-2 ">
+        <ScrollableBar>
           {users.map((user) => (
-            <li key={user.username}>
-              <Link
-                className="flex flex-col items-center w-20"
-                href={`/user/${user.username}`}
-              >
-                <Avatar image={user.image} highlight />
-                <p className="w-full text-sm text-ellipsis overflow-hidden text-center">
-                  {user.username}
-                </p>
-              </Link>
-            </li>
+            <Link
+              key={user.username}
+              className="flex flex-col items-center w-20"
+              href={`/user/${user.username}`}
+            >
+              <Avatar image={user.image} highlight />
+              <p className="w-full text-sm text-ellipsis overflow-hidden text-center">
+                {user.username}
+              </p>
+            </Link>
           ))}
-        </ul>
+        </ScrollableBar>
       )}
     </section>
   );
