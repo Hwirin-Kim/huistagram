@@ -1,55 +1,50 @@
+"use client";
 import { SimplePost } from "@/model/post";
-import { parseDate } from "@/util/date";
 import Image from "next/image";
+import { useState } from "react";
+import ActionBar from "./ActionBar";
 import Avatar from "./Avatar";
-import BookMarkIcon from "./ui/icons/BookmarkIcon";
-import HeartIcon from "./ui/icons/HeartIcon";
-import SmileIcon from "./ui/icons/SmileIcon";
+import CommentForm from "./CommentForm";
+import PostDetail from "./PostDetail";
+import PostModal from "./PostModal";
+import ModalPortal from "./ui/ModalPortal";
+import UserAvatar from "./UserAvatar";
 
+//priority를 Image에 입력하여 next가 미리 로드 할 수 있도록 하고 false되어있다면 해당 이미지가 보여져야 할 때 로드 할 수 있도록 한다.
 type Props = {
   post: SimplePost;
+  priority?: boolean;
 };
 
-export default function PostListCard({ post }: Props) {
+export default function PostListCard({ post, priority = false }: Props) {
   const { userImage, username, image, createdAt, likes, text } = post;
+  const [openModal, setOpenModal] = useState(false);
   return (
     <article className="rounded-lg shadow-md border border-gray-200">
-      <div className="flex items-center p-2">
-        <Avatar image={userImage} highlight size="medium" />
-        <span className="text-gray-900 font-bold ml-2">{username}</span>
-      </div>
+      <UserAvatar username={username} image={userImage} />
       <Image
         className="w-full object-cover aspect-square"
         src={image}
         alt={`photo by ${username}`}
         width={500}
         height={500}
+        priority={priority}
+        onClick={() => setOpenModal(true)}
       />
-      <div className="flex justify-between my-2 px-4 text-2xl">
-        <HeartIcon />
-        <BookMarkIcon />
-      </div>
-      <div className="px-4 py-1">
-        <p className="text-sm font-bold mb-2">{`${likes?.length ?? 0} ${
-          likes?.length > 1 ? "likes" : "like"
-        }`}</p>
-        <p>
-          <span className="font-bold mr-1">{username}</span>
-          {text}
-        </p>
-        <p className="text-xs text-neutral-500 uppercase my-2">
-          {parseDate(createdAt)}
-        </p>
-        <form className="flex border-t border-neutral-300 items-center">
-          <SmileIcon />
-          <input
-            className="w-full ml-2 border-none outline-none p-3"
-            type="text"
-            placeholder="Add a comment..."
-          />
-          <button className="font-bold text-sky-500 ml-2">Post</button>
-        </form>
-      </div>
+      <ActionBar
+        likes={likes}
+        text={text}
+        username={username}
+        createdAt={createdAt}
+      />
+      <CommentForm />
+      {openModal && (
+        <ModalPortal>
+          <PostModal onClose={() => setOpenModal(false)}>
+            <PostDetail post={post} />
+          </PostModal>
+        </ModalPortal>
+      )}
     </article>
   );
 }
