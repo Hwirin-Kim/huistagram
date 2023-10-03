@@ -1,13 +1,28 @@
 "use client";
 import { SimplePost } from "@/model/post";
+import { FadeLoader } from "react-spinners";
 import useSWR from "swr";
+import PostListCard from "./PostListCard";
 
 export default function PostList() {
   const { data: posts, isLoading } = useSWR<SimplePost[]>("/api/posts");
 
   return (
-    <ul>
-      {posts && posts.map((post) => <li key={post.id}>{post.username}</li>)}
-    </ul>
+    <section>
+      {isLoading && (
+        <div className="flex justify-center mt-40">
+          <FadeLoader color="red" />
+        </div>
+      )}
+      {posts && (
+        <ul>
+          {posts.map((post) => (
+            <li className="mb-4" key={post.id}>
+              <PostListCard post={post} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
