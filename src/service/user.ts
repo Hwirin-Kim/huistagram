@@ -29,3 +29,19 @@ export async function getUserByUsername(username: string) {
     }`
   );
 }
+
+export async function searchUsers(keyword?: string) {
+  //키워드는 이름이나 username 중 일치하면 검색되도록 정의한다.
+  const query = keyword
+    ? `&& (name match "*${keyword}") || (username match "*${keyword}")`
+    : "";
+  return client.fetch(
+    `
+    *[_type =="user" ${query}]{
+      ...,
+      "following":count(following),
+      "followers":count(followers),
+    }
+    `
+  );
+}
