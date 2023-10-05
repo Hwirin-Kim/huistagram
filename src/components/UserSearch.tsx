@@ -1,6 +1,7 @@
 "use client";
 
-import { ProfileUser } from "@/model/user";
+import useDebounce from "@/hooks/useDebounce";
+import { SearchUser } from "@/model/user";
 import { FormEvent, useState } from "react";
 import { FadeLoader } from "react-spinners";
 import useSWR from "swr";
@@ -8,11 +9,15 @@ import UserCard from "./UserCard";
 
 export default function UserSearch() {
   const [keyword, setKeyword] = useState("");
+  const debouncedKeyword = useDebounce(keyword, 500);
+
+  /* keyword가 변해서 재 렌더링 되어도 useSWR은 디바운스된 값을 전달하고 있고, swr자체에서 중복된 요청은 캐시된 값을 사용하기 때문에 네트워크 요청을 따로 하지 않게됨 */
+
   const {
     data: users,
     isLoading,
     error,
-  } = useSWR<ProfileUser[]>(`/api/search/${keyword}`);
+  } = useSWR<SearchUser[]>(`/api/search/${debouncedKeyword}`);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
