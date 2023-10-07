@@ -7,7 +7,7 @@ import PostListCard from "./PostListCard";
 
 export default function PostList() {
   const { posts, isLoading } = usePosts();
-  console.log(posts);
+
   return (
     <section>
       {isLoading && (
