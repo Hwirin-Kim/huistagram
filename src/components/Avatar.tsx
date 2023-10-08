@@ -14,7 +14,7 @@ export default function Avatar({
     <div className={getContainerStyle(size, highlight)}>
       {/*eslint-disable-next-line @next/next/no-img-element */}
       <img
-        className={`bg-white rounded-full object-cover  ${getImageSizeStyle(
+        className={`bg-white rounded-full object-cover   ${getImageSizeStyle(
           size
         )}`}
         src={image ?? undefined}
@@ -26,7 +26,7 @@ export default function Avatar({
 }
 
 function getContainerStyle(size: AvatarSize, highlight: boolean): string {
-  const base = "rounded-full flex justify-center items-center";
+  const base = "rounded-full flex justify-center items-center shrink-0";
   const highlightStyle = highlight
     ? "bg-gradient-to-bl from-fuchsia-600 via-rose-500 to-amber-300"
     : "";
