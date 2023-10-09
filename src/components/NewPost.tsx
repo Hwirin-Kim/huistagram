@@ -1,7 +1,9 @@
 "use client";
 import { AuthUser } from "@/model/user";
 import Image from "next/image";
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { FormEvent, useRef, useState } from "react";
+import { SyncLoader } from "react-spinners";
 import Button from "./ui/Button";
 import FilesIcon from "./ui/icons/FilesIcon";
 import UserAvatar from "./UserAvatar";
@@ -12,14 +14,15 @@ type Props = {
 export default function NewPost({ user: { username, image } }: Props) {
   const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File>();
-
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState<string>("");
+  const textRef = useRef<HTMLTextAreaElement>(null);
+  const router = useRouter();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-
     const files = e.target?.files;
     if (files && files[0]) {
       setFile(files[0]);
-      console.log(files[0]);
     }
   };
 
@@ -30,6 +33,7 @@ export default function NewPost({ user: { username, image } }: Props) {
       setDragging(false);
     }
   };
+
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
   };
@@ -40,13 +44,44 @@ export default function NewPost({ user: { username, image } }: Props) {
     const files = e.dataTransfer?.files;
     if (files && files[0]) {
       setFile(files[0]);
-      console.log(files[0]);
     }
   };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!file) return;
+
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("text", textRef.current?.value ?? "");
+
+    fetch("/api/posts/", { method: "POST", body: formData }) //
+      .then((res) => {
+        if (!res.ok) {
+          setErr(`${res.status} ${res.statusText}`);
+          return;
+        }
+        router.push("/");
+      })
+      .catch((err) => setErr(err.toString()))
+      .finally(() => setLoading(false));
+  };
+
   return (
     <section className="w-full max-w-xl flex flex-col items-center mt-6">
+      {loading && (
+        <div className="absolute inset-0 z-20 text-center pt-[30%] bg-sky-500/20">
+          <SyncLoader />
+        </div>
+      )}
+      {err && (
+        <p className="w-full bg-red-100 text-red-600 text-center p-4 mb-4 font-bold">
+          {err}
+        </p>
+      )}
       <UserAvatar username={username} image={image ?? ""} />
-      <form className="w-full flex flex-col mt-2">
+      <form onSubmit={handleSubmit} className="w-full flex flex-col mt-2">
         <input
           className="hidden"
           name="input"
@@ -93,6 +128,7 @@ export default function NewPost({ user: { username, image } }: Props) {
           required
           rows={10}
           placeholder="텍스트를 입력하세요."
+          ref={textRef}
         />
         <Button text="Publish" onClick={() => {}} />
       </form>
