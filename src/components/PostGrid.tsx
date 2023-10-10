@@ -1,7 +1,7 @@
 import usePosts from "@/hooks/usePosts";
-import { SimplePost } from "@/model/post";
+
 import { FadeLoader } from "react-spinners";
-import useSWR from "swr";
+
 import PostGridCard from "./PostGridCard";
 
 export default function PostGrid() {
