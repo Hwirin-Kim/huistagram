@@ -1,8 +1,5 @@
 import { withSessionUser } from "@/util/session";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { createPost, getFollowingPostsOf } from "@/service/posts";
-import { getUserByUsername } from "@/service/user";
-import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
